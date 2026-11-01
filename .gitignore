@@ -1,0 +1,37 @@
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Node.js
+node_modules/
+dist/
+*.log
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Python tools
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Build and cache files
+*.tsbuildinfo
+.cache/
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
