@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef } from 'react'
 import gsap from 'gsap'
-import { checkBackend } from './services/api.ts'
 import { Music, Skull, Zap } from 'lucide-react'
 
 function App() {
   const heroRef = useRef<HTMLElement>(null)
 
-  const [backendStatus, setBackendStatus] = useState('Checking...')
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
 
   useEffect(() => {
     if (!heroRef.current)
@@ -26,14 +25,6 @@ function App() {
         ease: 'power3.out',
       }
     )
-
-    checkBackend()
-      .then((data) => {
-        setBackendStatus(`${data.application} is ${data.status}`)
-      })
-      .catch(() => {
-        setBackendStatus('Backend offline')
-      })
   }, [])
 
   return (
@@ -54,15 +45,36 @@ function App() {
           </span>
         </div>
 
-        <div className="text-sm text-zinc-500">
-          {backendStatus}
+        <div className="flex items-center gap-6">
+          <a
+            href="#how-it-works"
+            className="hidden text-sm text-zinc-400 transition hover:text-white md:block"
+          >
+            How it works
+          </a>
+
+          <a
+            href="#about"
+            className="hidden text-sm text-zinc-400 transition hover:text-white md:block"
+          >
+            About
+          </a>
+
+          <a
+            href="#roast"
+            className="rounded-full bg-white px-5 py-2 text-sm font-bold text-black transition hover:scale-105"
+          >
+            Get Roasted 💀
+          </a>
         </div>
       </nav>
 
       {/* Hero Section */}
       <section
+        id="roast"
         ref={heroRef}
-        className="relative z-10 flex min-h-[80vh] flex-col items-center justify-center px-6 text-center">
+        className="relative z-10 flex min-h-[80vh] flex-col items-center justify-center px-6 text-center"
+      >
         <div className="mb-6 flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-400">
           <Zap className="h-4 w-4 text-green-400" />
           Your music taste is about to be judged
@@ -82,10 +94,20 @@ function App() {
           questionable music choices, and prepare to be absolutely destroyed.
         </p>
 
-        <button className="mt-10 flex items-center gap-3 rounded-full bg-green-400 px-7 py-4 font-bold text-black transition hover:scale-105 hover:bg-green-300">
+        <button
+          onClick={() => setIsAnalyzing(true)}
+          disabled={isAnalyzing}
+          className="mt-10 flex items-center gap-3 rounded-full bg-green-400 px-7 py-4 font-bold text-black shadow-lg shadow-green-500/20 transition duration-300 hover:scale-105 hover:bg-green-300 hover:shadow-green-400/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+        >
           <Music className="h-5 w-5" />
-          Connect Spotify
+
+          {isAnalyzing ? 'Analyzing...' : 'Connect Spotify'}
         </button>
+        {isAnalyzing && (
+          <div className="mt-6 text-sm text-green-400">
+            🎧 Analyzing your questionable music taste...
+          </div>
+        )}
 
         <p className="mt-6 text-sm text-zinc-600">
           No music will be played. Only your dignity will be destroyed. 💀
