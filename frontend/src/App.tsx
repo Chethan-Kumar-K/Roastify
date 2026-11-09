@@ -4,8 +4,20 @@ import { Music, Skull, Zap } from 'lucide-react'
 
 function App() {
   const heroRef = useRef<HTMLElement>(null)
+  const roastRef = useRef<HTMLDivElement>(null)
 
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [showRoast, setShowRoast] = useState(false)
+
+  const startRoast = () => {
+    setShowRoast(false)
+    setIsAnalyzing(true)
+
+    setTimeout(() => {
+      setIsAnalyzing(false)
+      setShowRoast(true)
+    }, 3000)
+  }
 
   useEffect(() => {
     if (!heroRef.current)
@@ -26,6 +38,26 @@ function App() {
       }
     )
   }, [])
+
+  useEffect(() => {
+    if (showRoast && roastRef.current) {
+      gsap.fromTo(
+        roastRef.current,
+        {
+          opacity: 0,
+          y: 50,
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          ease: 'back.out(1.7)',
+        }
+      )
+    }
+  }, [showRoast])
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#090909] text-white">
@@ -95,17 +127,53 @@ function App() {
         </p>
 
         <button
-          onClick={() => setIsAnalyzing(true)}
+          onClick={startRoast}
           disabled={isAnalyzing}
           className="mt-10 flex items-center gap-3 rounded-full bg-green-400 px-7 py-4 font-bold text-black shadow-lg shadow-green-500/20 transition duration-300 hover:scale-105 hover:bg-green-300 hover:shadow-green-400/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <Music className="h-5 w-5" />
 
-          {isAnalyzing ? 'Analyzing...' : 'Connect Spotify'}
+          {isAnalyzing
+            ? 'Analyzing...'
+            : showRoast
+              ? 'Roast Me Again 🔥'
+              : 'Connect Spotify'}
         </button>
         {isAnalyzing && (
           <div className="mt-6 text-sm text-green-400">
             🎧 Analyzing your questionable music taste...
+          </div>
+        )}
+        {showRoast && (
+          <div
+            ref={roastRef}
+            className="mt-10 max-w-2xl rounded-3xl border border-green-500/20 bg-zinc-900/80 p-8 text-left shadow-2xl shadow-green-500/10 backdrop-blur"
+          >
+            <div className="mb-6 flex items-center gap-3">
+              <Skull className="h-7 w-7 text-green-400" />
+
+              <div>
+                <p className="text-sm font-bold tracking-widest text-green-400">
+                  ROASTIFY VERDICT
+                </p>
+
+                <h2 className="text-2xl font-black">
+                  Your music taste needs supervision.
+                </h2>
+              </div>
+            </div>
+
+            <p className="text-lg leading-relaxed text-zinc-300">
+              You have somehow managed to turn your Spotify library into an emotional
+              rollercoaster with absolutely no seatbelts. One minute you're listening
+              to heartbreak songs, and the next you're acting like the main character
+              in a movie nobody asked for.
+            </p>
+
+            <p className="mt-6 text-zinc-400">
+              Honestly, we're not judging...
+              <span className="font-bold text-green-400"> okay, we are.</span> 💀
+            </p>
           </div>
         )}
 
