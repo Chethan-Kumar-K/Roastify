@@ -14,3 +14,19 @@ export async function checkBackend(): Promise<HealthResponse> {
 
     return response.json()
 }
+
+export interface RoastResponse {
+    title: string
+    roast: string
+    verdict: string
+}
+
+export async function getRoast(): Promise<RoastResponse> {
+    const response = await fetch('/api/roast')
+
+    if (!response.ok) {
+        throw new Error('Failed to get roast')
+    }
+
+    return response.json()
+}

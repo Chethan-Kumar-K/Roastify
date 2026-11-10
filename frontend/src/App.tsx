@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import gsap from 'gsap'
 import { Music, Skull, Zap } from 'lucide-react'
+import { getRoast, type RoastResponse } from './services/api.ts'
 
 function App() {
   const heroRef = useRef<HTMLElement>(null)
@@ -8,15 +9,25 @@ function App() {
 
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [showRoast, setShowRoast] = useState(false)
+  const [roast, setRoast] = useState<RoastResponse | null>(null)
 
-  const startRoast = () => {
+  const startRoast = async () => {
     setShowRoast(false)
     setIsAnalyzing(true)
 
-    setTimeout(() => {
+    try {
+      const data = await getRoast()
+
+      // Keep the dramatic suspense 😈
+      setTimeout(() => {
+        setRoast(data)
+        setIsAnalyzing(false)
+        setShowRoast(true)
+      }, 3000)
+    } catch (error) {
+      console.error('Failed to get roast:', error)
       setIsAnalyzing(false)
-      setShowRoast(true)
-    }, 3000)
+    }
   }
 
   useEffect(() => {
@@ -129,7 +140,7 @@ function App() {
         <button
           onClick={startRoast}
           disabled={isAnalyzing}
-          className="mt-10 flex items-center gap-3 rounded-full bg-green-400 px-7 py-4 font-bold text-black shadow-lg shadow-green-500/20 transition duration-300 hover:scale-105 hover:bg-green-300 hover:shadow-green-400/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-10 flex items-center gap-3 rounded-full bg-green-400 px-7 py-4 font-bold text-black shadow-lg shadow-green-500/20 transition duration-105 hover:scale-105 hover:bg-green-300 hover:shadow-green-400/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <Music className="h-5 w-5" />
 
@@ -158,21 +169,17 @@ function App() {
                 </p>
 
                 <h2 className="text-2xl font-black">
-                  Your music taste needs supervision.
+                  {roast?.title}
                 </h2>
               </div>
             </div>
 
             <p className="text-lg leading-relaxed text-zinc-300">
-              You have somehow managed to turn your Spotify library into an emotional
-              rollercoaster with absolutely no seatbelts. One minute you're listening
-              to heartbreak songs, and the next you're acting like the main character
-              in a movie nobody asked for.
+              {roast?.roast}
             </p>
 
-            <p className="mt-6 text-zinc-400">
-              Honestly, we're not judging...
-              <span className="font-bold text-green-400"> okay, we are.</span> 💀
+            <p className="mt-6 font-bold text-green-400">
+              {roast?.verdict}
             </p>
           </div>
         )}
